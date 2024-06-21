@@ -1,0 +1,42 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+	<TargetFrameworks>net6.0;net8.0</TargetFrameworks>
+    <ImplicitUsings>enable</ImplicitUsings>
+
+	<Description>Prevent SQL injection</Description>
+	<Copyright>Copyright 2024 ToolGood</Copyright>
+	<AssemblyTitle>ToolGood.SQLFirewall</AssemblyTitle>
+	<Authors>ToolGood</Authors>
+	<AssemblyName>ToolGood.SQLFirewall</AssemblyName>
+	<PublicSign>true</PublicSign>
+	<PackageId>ToolGood.SQLFirewall</PackageId>
+	<PackageTags>SQLFirewall;sql;firewall;SQL injection</PackageTags>
+	<PackageProjectUrl>https://github.com/toolgood/ToolGood.SQLFirewall</PackageProjectUrl>
+	<PackageLicenseUrl></PackageLicenseUrl>
+	<RepositoryType>git</RepositoryType>
+	<RootNamespace>ToolGood.SQLFirewall</RootNamespace>
+	<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+	<PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
+	<Product>ToolGood.SQLFirewall</Product>
+	<PackageLicenseFile>LICENSE</PackageLicenseFile>
+	<SignAssembly>True</SignAssembly>
+	<Version>1.0.0</Version>
+	<AssemblyOriginatorKeyFile>ToolGood.SQLFirewall.snk</AssemblyOriginatorKeyFile>
+	<DelaySign>false</DelaySign>
+	<DocumentationFile>bin\$(Configuration)\$(TargetFramework)\ToolGood.SQLFirewall.xml</DocumentationFile>
+	<RepositoryUrl>https://github.com/toolgood/ToolGood.SQLFirewall.git</RepositoryUrl>
+  </PropertyGroup>
+
+  <ItemGroup>
+		<FrameworkReference Include="Microsoft.AspNetCore.App" />
+	</ItemGroup>
+
+  <ItemGroup>
+    <None Include="..\LICENSE">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
+  </ItemGroup>
+	
+</Project>
