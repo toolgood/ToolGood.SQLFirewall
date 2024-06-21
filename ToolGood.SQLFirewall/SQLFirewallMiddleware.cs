@@ -114,9 +114,10 @@ namespace ToolGood.SQLFirewall
         private bool IsMatch(JsonNode jsonNode, List<Regex> regexes)
         {
             if (jsonNode is JsonValue jsonValue) {
-                var str = jsonValue.GetValue<string>();
-                var sql = SqlConversionStandard(str);
-                return IsMatch(sql, regexes);
+                if (jsonValue.TryGetValue<string>(out string str)) {
+                    var sql = SqlConversionStandard(str);
+                    return IsMatch(sql, regexes);
+                }
             } else if (jsonNode is JsonObject jobject) {
                 var enumerator = jobject.GetEnumerator();
                 while (enumerator.MoveNext()) {
