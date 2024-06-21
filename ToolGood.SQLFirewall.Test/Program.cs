@@ -1,15 +1,11 @@
-﻿using System.Collections.Generic;
-using System.Text.RegularExpressions;
-
-namespace ToolGood.SQLFirewall.Test
+﻿namespace ToolGood.SQLFirewall.Test
 {
     internal class Program
     {
-        static void Main(string[] args)
+        private static void Main(string[] args)
         {
             SQLFirewallType firewallType = SQLFirewallType.MsSQL;
             SQLFirewallType remove = SQLFirewallType.ALL ^ firewallType;
-
 
             // 数据来源 https://github.com/payloadbox/sql-injection-payload-list
             var files = Directory.GetFiles("Datas", "*.txt", SearchOption.AllDirectories);
@@ -32,7 +28,6 @@ namespace ToolGood.SQLFirewall.Test
             var notFind = new List<string>();
             foreach (var sql in sqls) {
                 if (sql == "%00") {
-
                 }
 
                 var find = false;
@@ -47,9 +42,6 @@ namespace ToolGood.SQLFirewall.Test
             Console.WriteLine(notFind.Count);
 
             File.WriteAllLines("notFind.txt", notFind.ToArray());
-
-
-
         }
     }
 }

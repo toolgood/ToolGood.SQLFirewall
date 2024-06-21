@@ -1,6 +1,4 @@
-﻿using Microsoft.AspNetCore.Hosting;
-using System.Text.RegularExpressions;
-using ToolGood.SQLFirewall;
+﻿using ToolGood.SQLFirewall;
 
 namespace ToolGood.Navigation
 {
@@ -13,23 +11,14 @@ namespace ToolGood.Navigation
                 .LoadFromConfig(builder.Configuration.GetSection("ReverseProxy"))
                 ;
 
-
-      
-    
-
             var app = builder.Build();
 
-            app.UseSQLFirewall_ServerHeader();
-            app.UseSQLFirewall(SQLFirewallType.MsSQL, "/Admins/Logs/Ajax/GetLoginList");
+            app.UseSQLFirewall_ServerHeader("ToolGood");
+            //app.UseSQLFirewall(SQLFirewallType.MsSQL);
+            app.UseSQLFirewall(SQLFirewallType.MsSQL, "/Admins/Logs/Ajax/GetLoginList", "/Admins/User/Ajax/*");
 
             app.MapReverseProxy();
             app.Run();
         }
-
-
-
     }
-
-
-
 }

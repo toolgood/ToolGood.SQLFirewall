@@ -1,11 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Text.Json.Nodes;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 
 namespace ToolGood.SQLFirewall
 {
@@ -17,10 +12,11 @@ namespace ToolGood.SQLFirewall
         private readonly RequestDelegate _next;
         private readonly SQLFirewallType _firewallType;
         private readonly HashSet<string> _ignoreUrls;
+        private readonly List<string> _ignoreUrls2;
         private readonly List<Regex> sqlRegexs;
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="next"></param>
         /// <param name="firewallType"></param>
@@ -30,24 +26,30 @@ namespace ToolGood.SQLFirewall
             _next = next ?? throw new ArgumentNullException(nameof(next));
             _firewallType = firewallType;
             _ignoreUrls = null;
+            _ignoreUrls2 = null;
             sqlRegexs = GetSqlRegexes(firewallType);
         }
+
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="next"></param>
         /// <param name="firewallType"></param>
         /// <param name="ignoreUrls"></param>
         /// <exception cref="ArgumentNullException"></exception>
-
         public SQLFirewallMiddleware(RequestDelegate next, SQLFirewallType firewallType, string[] ignoreUrls)
         {
             _next = next ?? throw new ArgumentNullException(nameof(next));
             _firewallType = firewallType;
             _ignoreUrls = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+            _ignoreUrls2 = new List<string>();
             if (ignoreUrls != null) {
                 foreach (var url in ignoreUrls) {
-                    _ignoreUrls.Add(url);
+                    if (url.EndsWith('*')) {
+                        _ignoreUrls2.Add(url.Substring(0, url.Length - 1));
+                    } else {
+                        _ignoreUrls.Add(url);
+                    }
                 }
             }
             sqlRegexs = GetSqlRegexes(firewallType);
@@ -64,6 +66,15 @@ namespace ToolGood.SQLFirewall
             if (_ignoreUrls != null && _ignoreUrls.Contains(context.Request.Path)) {
                 await _next.Invoke(context);
                 return;
+            }
+            if (_ignoreUrls2 != null && _ignoreUrls2.Count > 0) {
+                var url = context.Request.Path.ToString();
+                foreach (var item in _ignoreUrls2) {
+                    if (url.StartsWith(item, StringComparison.OrdinalIgnoreCase)) {
+                        await _next.Invoke(context);
+                        return;
+                    }
+                }
             }
 
             var list = sqlRegexs;
@@ -99,6 +110,7 @@ namespace ToolGood.SQLFirewall
             }
             await _next.Invoke(context);
         }
+
         private bool IsMatch(JsonNode jsonNode, List<Regex> regexes)
         {
             if (jsonNode is JsonValue jsonValue) {
@@ -117,6 +129,7 @@ namespace ToolGood.SQLFirewall
             }
             return false;
         }
+
         private bool IsMatch(string sql, List<Regex> regexes)
         {
             foreach (var regStr in regexes) {
@@ -140,6 +153,7 @@ namespace ToolGood.SQLFirewall
             }
             return false;
         }
+
         private static List<Regex> GetSqlRegexes(SQLFirewallType firewallType)
         {
             var list = new List<string>();
@@ -204,6 +218,7 @@ namespace ToolGood.SQLFirewall
             }
             return regexes;
         }
+
         private static string SqlConversionStandard(string sql)
         {
             var txt = Regex.Replace(sql, @"/\*.*?\*/", " ", RegexOptions.IgnoreCase | RegexOptions.Compiled);

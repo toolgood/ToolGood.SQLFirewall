@@ -2,7 +2,6 @@
 {
     using Microsoft.AspNetCore.Builder;
 
-
     /// <summary>
     /// Extension methods for adding the <see cref="SQLFirewallMiddleware"/> to an application.
     /// </summary>
@@ -28,8 +27,9 @@
                 await next.Invoke(context);
             });
         }
+
         /// <summary>
-        /// Use SQL Firewall 
+        /// Use SQL Firewall
         /// </summary>
         /// <param name="app"></param>
         /// <param name="firewallType"></param>
@@ -39,8 +39,9 @@
             ArgumentNullException.ThrowIfNull(app);
             return app.UseMiddleware<SQLFirewallMiddleware>(firewallType);
         }
+
         /// <summary>
-        /// Use SQL Firewall 
+        /// Use SQL Firewall
         /// </summary>
         /// <param name="app"></param>
         /// <param name="firewallType">SQL Type</param>
@@ -51,7 +52,5 @@
             ArgumentNullException.ThrowIfNull(app);
             return app.UseMiddleware<SQLFirewallMiddleware>(firewallType, ignoreUrls);
         }
-
-
     }
 }
