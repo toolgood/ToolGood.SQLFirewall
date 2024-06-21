@@ -115,7 +115,8 @@ namespace ToolGood.SQLFirewall
         {
             if (jsonNode is JsonValue jsonValue) {
                 var str = jsonValue.GetValue<string>();
-                return IsMatch(str, regexes);
+                var sql = SqlConversionStandard(str);
+                return IsMatch(sql, regexes);
             } else if (jsonNode is JsonObject jobject) {
                 var enumerator = jobject.GetEnumerator();
                 while (enumerator.MoveNext()) {
@@ -158,7 +159,7 @@ namespace ToolGood.SQLFirewall
         {
             var list = new List<string>();
             list.Add(@"ldap:|rmi:|JDBC4Connection|trax\.TemplatesImpl");
-            list.Add(@"<[^>]+?style=[\w]+?:expression\(|\bonmouse(over|move)=\b|\b(alert|confirm|prompt)\b|<[^>]*?=[^>]*?&#[^>]*?>");
+            //list.Add(@"<[^>]+?style=[\w]+?:expression\(|\bonmouse(over|move)=\b|\b(alert|confirm|prompt)\b|<[^>]*?=[^>]*?&#[^>]*?>");
 
             list.Add(@"('|""|;|`)\){0,9}.*( –|--|/\*|#)");
             if (firewallType.HasFlag(SQLFirewallType.MySQL)) {
@@ -182,7 +183,7 @@ namespace ToolGood.SQLFirewall
 
             list.Add(@"\b(call|execute|exec|grant|ORDER BY|group by|CASE WHEN|INNER JOIN|LEFT JOIN|RIGHT JOIN|FULL OUTER JOIN|FULL JOIN|declare|BACKUP)\b");
 
-            list.Add(@"\bsleep\(\d+\)|sleep\(__TIME__\)|and substring\(password");
+            list.Add(@"\bsleep\(\d+\)|\bsleep\(__TIME__\)|\band substring\(password");
 
             //数据库 库表
             //MySQL
@@ -222,8 +223,11 @@ namespace ToolGood.SQLFirewall
         private static string SqlConversionStandard(string sql)
         {
             var txt = Regex.Replace(sql, @"/\*.*?\*/", " ", RegexOptions.IgnoreCase | RegexOptions.Compiled);
-            txt = Regex.Replace(txt, @"( |\t|\r|\n|\t|\v|\f|%20|\\x20|%00|\\x00|&nbsp;|&ensp;|&emsp;|&thinsp;|&zwnj;|&zwj;)+", " ", RegexOptions.IgnoreCase | RegexOptions.Compiled);
-            txt = Regex.Replace(txt, @"(\\x27|%27|‘|’|′|&apos;)", "'", RegexOptions.IgnoreCase | RegexOptions.Compiled);
+            // 经测试 select\x201 是无效代码，   ‘|’|′ 不会转成 ' 也是无效代码
+            //txt = Regex.Replace(txt, @"( |\t|\r|\n|\t|\v|\f|%20|\\x20|%00|\\x00|&nbsp;|&ensp;|&emsp;|&thinsp;|&zwnj;|&zwj;)+", " ", RegexOptions.IgnoreCase | RegexOptions.Compiled);
+            //txt = Regex.Replace(txt, @"(\\x27|%27|‘|’|′|&apos;)", "'", RegexOptions.IgnoreCase | RegexOptions.Compiled);
+
+            txt = Regex.Replace(txt, @"( |\t|\r|\n|\t|\v|\f|\x00|\s)+", " ", RegexOptions.IgnoreCase | RegexOptions.Compiled);
             return txt;
         }
     }
