@@ -162,29 +162,26 @@ namespace ToolGood.SQLFirewall
             list.Add(@"ldap:|rmi:|JDBC4Connection|trax\.TemplatesImpl");
             //list.Add(@"<[^>]+?style=[\w]+?:expression\(|\bonmouse(over|move)=\b|\b(alert|confirm|prompt)\b|<[^>]*?=[^>]*?&#[^>]*?>");
 
-            list.Add(@"('|""|;|`)\){0,9}.*( –|--|/\*|#)");
+            list.Add(@"['""`;].*?( –|--|/\*|#)"); // 利用注释的注入
             if (firewallType.HasFlag(SQLFirewallType.MySQL)) {
-                list.Add(@"('|""|;|`)\){0,9} ?(or|\|\|) ?\({0,9}('|""|;|`)");
-                list.Add(@"(or|and|\|\||&&) \({1,3}EXISTS\){1,3}");
-                list.Add(@"(or|and|\|\||&&) \({0,3}(true|false|1|0|['""`]?[a-z_0-9]+['""`]? ?(>|>=|<|<=|=|==|<>) ?['""`]?[a-z_0-9]+['""`]?|['""`]['""`] ?= ?['""`])");
-                list.Add(@"(or|and|\|\||&&) \({0,3}[a-z_0-9]+ between \d+ and \d+");
-                list.Add(@"(or|and|\|\||&&) \({0,3}(username|uname|userid|id|uid|user|full_name|user_name)( ?=| is)");
-                list.Add(@"(or|and|\|\||&&) \({0,3}(username|uname|userid|id|uid|user|full_name|user_name) like ('%|\({0,3}char\(37\))");
+                list.Add(@"['""`]\){0,9} ?(or|\|\|)\b.*['""`]");// 利用or的注入
+                list.Add(@"(or|and|\|\||&&) \({0,3}(EXISTS|isNULL|ifnull|substring|mid|true|false|1|0)");
+                list.Add(@"(or|and|\|\||&&) \({0,3}['""`]?[a-z_0-9\.]+['""`]? ?([+\-&/<>=%\|&]|>=|<=|==|<>|!=)");
+                list.Add(@"(or|and|\|\||&&) \({0,3}['""`]?[a-z_0-9\.]+['""`]? (between|is|like|GLOB|in|MATCH|REGEXP|not) ");
             } else {
-                list.Add(@"('|""|;|`)\){0,9} ?or ?\({0,9}('|""|;|`)");
-                list.Add(@"(or|and) \({1,3}EXISTS\){1,3}");
-                list.Add(@"(or|and) \({0,3}(true|false|1|0|['""`]?[a-z_0-9]+['""`]? ?(>|>=|<|<=|=|==|<>) ?['""`]?[a-z_0-9]+['""`]?|['""`]['""`] ?= ?['""`])");
-                list.Add(@"(or|and) \({0,3}[a-z_0-9]+ between \d+ and \d+");
-                list.Add(@"(or|and) \({0,3}(username|uname|userid|id|uid|user|full_name|user_name)( ?=| is| in)");
-                list.Add(@"(or|and) \({0,3}(username|uname|userid|id|uid|user|full_name|user_name) like ('%|\({0,3}char\(37\))");
+                list.Add(@"['""`]\){0,9} ?or\b.*['""`]");
+                list.Add(@"(or|and) \({0,3}(EXISTS|isNULL|ifnull|substring|mid|true|false|1|0)");
+                list.Add(@"(or|and) \({0,3}['""`]?[a-z_0-9\.]+['""`]? ?([+\-&/<>=%\|&]|>=|<=|==|<>|!=)");
+                list.Add(@"(or|and) \({0,3}['""`]?[a-z_0-9\.]+['""`]? (between|is|like|GLOB|in|MATCH|REGEXP|not) ");
             }
 
-            list.Add(@"UNION.+?SELECT|SELECT.+?INTO|UPDATE.+?SET|INSERT INTO|(SELECT|DELETE).+?FROM|(CREATE|ALTER|DROP|TRUNCATE)\s+(TABLE|DATABASE|procedure|Function)");
-            list.Add(@"\bselect \({0,3}(\*|count|top|DISTINCT|current_user|session_user|version\(|current_database\(|CHAR\(|bin\()");
+            list.Add(@"UNION.+?SELECT|SELECT.+?INTO|UPDATE.+?SET|INSERT INTO|(SELECT|DELETE).+?FROM|(CREATE|ALTER|DROP|TRUNCATE)\s+(TABLE|DATABASE|procedure|Function)|CASE.+WHEN.+THEN.+END");
+            
+            list.Add(@"\bselect \({0,3}(\*|count|top|DISTINCT|current_user|session_user|substring|mid|version\(|current_database\(|CHAR\(|bin\()");
 
-            list.Add(@"\b(call|execute|exec|grant|ORDER BY|group by|CASE WHEN|INNER JOIN|LEFT JOIN|RIGHT JOIN|FULL OUTER JOIN|FULL JOIN|declare|BACKUP)\b");
+            list.Add(@"\b(call|execute|exec|grant|ORDER BY|group by|INNER JOIN|LEFT JOIN|RIGHT JOIN|FULL OUTER JOIN|FULL JOIN|declare|BACKUP)\b");
 
-            list.Add(@"\bsleep\(\d+\)|\bsleep\(__TIME__\)|\band substring\(password");
+            list.Add(@"\bsleep\(\d+\)|sleep\(__TIME__\)|\bsubstring\(password");
 
             //数据库 库表
             //MySQL
