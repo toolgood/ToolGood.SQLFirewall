@@ -225,7 +225,7 @@ namespace ToolGood.SQLFirewall
             //txt = Regex.Replace(txt, @"( |\t|\r|\n|\t|\v|\f|%20|\\x20|%00|\\x00|&nbsp;|&ensp;|&emsp;|&thinsp;|&zwnj;|&zwj;)+", " ", RegexOptions.IgnoreCase | RegexOptions.Compiled);
             //txt = Regex.Replace(txt, @"(\\x27|%27|‘|’|′|&apos;)", "'", RegexOptions.IgnoreCase | RegexOptions.Compiled);
 
-            txt = Regex.Replace(txt, @"( |\t|\r|\n|\t|\v|\f|\x00|\s)+", " ", RegexOptions.IgnoreCase | RegexOptions.Compiled);
+            txt = Regex.Replace(txt, @"(\s|\x00|%20|\\x20)+", " ", RegexOptions.IgnoreCase | RegexOptions.Compiled);
             return txt;
         }
     }
