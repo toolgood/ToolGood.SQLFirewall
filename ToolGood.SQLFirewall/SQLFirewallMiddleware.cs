@@ -187,7 +187,7 @@ namespace ToolGood.SQLFirewall
             //MySQL
             if (firewallType.HasFlag(SQLFirewallType.MySQL)) {
                 list.Add(@"\b(handler|load_file|outfile|benchmark)\b");
-                list.Add(@"\b(INFORMATION_SCHEMA|mysql|performance_schema)\b");
+                list.Add(@"\b(INFORMATION_SCHEMA|performance_schema)\b");
             }
             if (firewallType.HasFlag(SQLFirewallType.MsSQL)) {
                 list.Add(@"\b(sp_password|waitfor delay)\b|@@servername|@@microsoftversione|@@version");

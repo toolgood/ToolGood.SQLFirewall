@@ -1,11 +1,11 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-	<TargetFrameworks>net6.0;net8.0</TargetFrameworks>
+	<TargetFrameworks>net6.0;net8.0;net9.0</TargetFrameworks>
     <ImplicitUsings>enable</ImplicitUsings>
 
 	<Description>Prevent SQL injection</Description>
-	<Copyright>Copyright 2024 ToolGood</Copyright>
+	<Copyright>Copyright 2024-2025 ToolGood</Copyright>
 	<AssemblyTitle>ToolGood.SQLFirewall</AssemblyTitle>
 	<Authors>ToolGood</Authors>
 	<AssemblyName>ToolGood.SQLFirewall</AssemblyName>
@@ -21,7 +21,7 @@
 	<Product>ToolGood.SQLFirewall</Product>
 	<PackageLicenseFile>LICENSE</PackageLicenseFile>
 	<SignAssembly>True</SignAssembly>
-	<Version>1.0.2</Version>
+	<Version>1.0.3</Version>
 	<AssemblyOriginatorKeyFile>ToolGood.SQLFirewall.snk</AssemblyOriginatorKeyFile>
 	<DelaySign>false</DelaySign>
 	<DocumentationFile>bin\$(Configuration)\$(TargetFramework)\ToolGood.SQLFirewall.xml</DocumentationFile>
