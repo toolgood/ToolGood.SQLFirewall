@@ -151,7 +151,9 @@ namespace ToolGood.SQLFirewall
             var sql = SqlConversionStandard(text);
             var list = GetSqlRegexes(firewallType);
             foreach (var item in list) {
-                if (item.IsMatch(sql)) { return true; }
+                if (item.IsMatch(sql)) { 
+                    return true;
+                }
             }
             return false;
         }
@@ -162,8 +164,10 @@ namespace ToolGood.SQLFirewall
             list.Add(@"ldap:|rmi:|JDBC4Connection|trax\.TemplatesImpl");
             //list.Add(@"<[^>]+?style=[\w]+?:expression\(|\bonmouse(over|move)=\b|\b(alert|confirm|prompt)\b|<[^>]*?=[^>]*?&#[^>]*?>");
 
-            list.Add(@"['""`;].*?( –|--|/\*|#)"); // 利用注释的注入
+            list.Add(@"['""`;][^'""`;]*?(--|/\*)"); // 利用注释的注入
             if (firewallType.HasFlag(SQLFirewallType.MySQL)) {
+                list.Add(@"['""`;][^'""`;]*?#(?![0-9A-Fa-f]{3}['""]|[0-9A-Fa-f]{6}['""])"); // 利用注释的注入
+
                 list.Add(@"['""`]\){0,9} ?(or|\|\|)\b.*['""`]");// 利用or的注入
                 list.Add(@"(or|and|\|\||&&) \({0,3}(EXISTS|isNULL|ifnull|substring|mid|true|false|1|0)");
                 list.Add(@"(or|and|\|\||&&) \({0,3}['""`]?[a-z_0-9\.]+['""`]? ?([+\-&/<>=%\|&]|>=|<=|==|<>|!=)");
